@@ -1,7 +1,7 @@
 import requests
 
 # Your API key
-api_key = "8f0ffc7cee004c948e56b494198b9fd3"
+api_key = ""
 
 # Set up the API endpoint with the API key as a query parameter
 endpoint = f"https://api.spoonacular.com/recipes/findByIngredients?apiKey={api_key}"
