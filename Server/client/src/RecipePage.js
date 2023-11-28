@@ -1,50 +1,22 @@
-import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const RecipePage = () => {
-  const [ingredient, setIngredient] = useState('');
-  const [ingredientList, setIngredientList] = useState([]);
-  const history = useHistory();
+const RecipesPage = () => {
+  const navigate = useNavigate();
 
-  const handleInputChange = (e) => {
-    setIngredient(e.target.value);
-  };
+  // Add logic for displaying generated recipes
 
-  const handleEnter = (e) => {
-    if (e.key === 'Enter' && ingredient.trim() !== '') {
-      setIngredientList([...ingredientList, ingredient.trim()]);
-      setIngredient('');
-    }
-  };
-
-  const handleGenerateRecipe = () => {
-    // Navigate to another page (you can replace '/recipe' with your desired route)
-    history.push('/recipe');
+  const goBackToHome = () => {
+    navigate('/');
   };
 
   return (
     <div>
-      <h1>Recipe Page</h1>
-      <div>
-        <input
-          type="text"
-          placeholder="Enter ingredient"
-          value={ingredient}
-          onChange={handleInputChange}
-          onKeyPress={handleEnter}
-        />
-        <button onClick={handleGenerateRecipe}>Generate Recipe</button>
-      </div>
-      <div>
-        <h2>Ingredient List:</h2>
-        <ul>
-          {ingredientList.map((item, index) => (
-            <li key={index}>{item}</li>
-          ))}
-        </ul>
-      </div>
+      <h1>Yummy Recipes Generated</h1>
+      {/* Add your generated recipes or content here */}
+      <button onClick={goBackToHome}>Back to Home</button>
     </div>
   );
 };
 
-export default RecipePage;
+export default RecipesPage;
