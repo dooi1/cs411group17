@@ -79,8 +79,6 @@ def create_spotify_oauth():
     client_id = Spotify_config.CLIENT_ID
     client_secret = Spotify_config.CLIENT_SECRET
     return SpotifyOAuth(
-        #client_id = '638ca72656254917bb96dcecfab88e4c',
-        #client_secret = '73ad56391cc044e4affb1b131f59d58d',
         client_id= client_id,
         client_secret=client_secret,
         redirect_uri = url_for('redirect_page', _external=True),
