@@ -3,7 +3,7 @@
 import time
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
-from flask import Flask, request, url_for, session, redirect
+from flask import Flask, request, url_for, session, redirect, render_template
 from config import Spotify_config
 
 # initialize Flask app
@@ -17,6 +17,10 @@ app.secret_key = 'fjiejfksmfksfmlsfmls'
 
 # set the key for the token info in the session dictionary
 TOKEN_INFO = 'token_info'
+
+@app.route('/categoryInput', methods=['GET'])
+def cat_input():
+    return render_template('test_input.html')
 
 # route to handle logging in
 @app.route('/')
@@ -37,11 +41,10 @@ def redirect_page():
     token_info = create_spotify_oauth().get_access_token(code)
     # save the token info in the session
     session[TOKEN_INFO] = token_info
-    # redirect the user to the save_discover_weekly route
     return redirect(url_for('cat_playlists',_external=True))
 
 # route to save the Discover Weekly songs to a playlist
-@app.route('/getPlaylists')
+@app.route('/getPlaylists',methods=['GET'])
 def cat_playlists():
     try: 
         # get the token info from the session
@@ -50,10 +53,10 @@ def cat_playlists():
         # if the token info is not found, redirect the user to the login route
         print('User not logged in')
         return redirect("/")
-
+    category_id = request.args.get('category')
     # create a Spotipy instance with the access token
     sp = spotipy.Spotify(auth=token_info['access_token'])
-    response = sp.category_playlists(category_id='dinner')['playlists']['items']
+    response = sp.category_playlists(category_id=str(category_id))['playlists']['items']
 
     return response
 
@@ -82,7 +85,7 @@ def create_spotify_oauth():
         client_id= client_id,
         client_secret=client_secret,
         redirect_uri = url_for('redirect_page', _external=True),
-        scope='user-library-read playlist-modify-public playlist-modify-private'
+        #scope='user-library-read playlist-modify-public playlist-modify-private'
     )
 
 app.run(debug=True)
