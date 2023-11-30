@@ -2,8 +2,9 @@
 
 import time
 import spotipy
+
 from spotipy.oauth2 import SpotifyOAuth
-from flask import Flask, request, url_for, session, redirect, render_template
+from flask import Flask, request, url_for, session, redirect, render_template, jsonify
 from config import Spotify_config
 
 # initialize Flask app
@@ -13,7 +14,7 @@ app = Flask(__name__)
 app.config['SESSION_COOKIE_NAME'] = 'Spotify Cookie'
 
 # set a random secret key to sign the cookie
-app.secret_key = 'fjiejfksmfksfmlsfmls'
+app.secret_key = Spotify_config.SECRET_KEY
 
 # set the key for the token info in the session dictionary
 TOKEN_INFO = 'token_info'
@@ -49,16 +50,26 @@ def cat_playlists():
     try: 
         # get the token info from the session
         token_info = get_token()
-    except:
+        if not token_info:
+            return jsonify({'error': 'Authentication required'}), 401
+        
+        category_id = request.args.get('category')
+        if not category_id:
+            return jsonify({'error': 'Missing Category ID'}), 400
+        sp = spotipy.Spotify(auth=token_info['access_token'])
+        response = sp.category_playlists(category_id=str(category_id))['playlists']['items']
+        return jsonify(response)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
         # if the token info is not found, redirect the user to the login route
-        print('User not logged in')
-        return redirect("/")
-    category_id = request.args.get('category')
-    # create a Spotipy instance with the access token
-    sp = spotipy.Spotify(auth=token_info['access_token'])
-    response = sp.category_playlists(category_id=str(category_id))['playlists']['items']
+        #print('User not logged in')
+        #return redirect("/")
+    #Originail code category_id = request.args.get('category')
+    #create a Spotipy instance with the access token
+    #sp = spotipy.Spotify(auth=token_info['access_token'])
+    #response = sp.category_playlists(category_id=str(category_id))['playlists']['items']
 
-    return response
+    #return response
 
 
 # function to get the token info from the session
@@ -77,6 +88,7 @@ def get_token():
         token_info = spotify_oauth.refresh_access_token(token_info['refresh_token'])
 
     return token_info
+
 
 def create_spotify_oauth():
     client_id = Spotify_config.CLIENT_ID
