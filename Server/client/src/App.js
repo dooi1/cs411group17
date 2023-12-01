@@ -1,19 +1,19 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
+import App from './App';
+import IngredientsPage from './IngredientsPage';
+import RecipePage from './RecipePage';
+import WelcomePage from './WelcomePage';
 
-const App = () => {
-  const navigate = useNavigate();
-
-  const handleGetStartedClick = () => {
-    navigate('/ingredientspage');
-  };
-
+const Main = () => {
   return (
-    <div>
-      <h1>Hi! Welcome to Meal + Music</h1>
-      <button onClick={handleGetStartedClick}>Get Started</button>
-    </div>
+    <Routes>
+      <Route path="/" element={<WelcomePage />} /> {/* Use WelcomePage as the starting point */}
+      <Route path="/app" element={<App />} />
+      <Route path="/ingredientspage" element={<IngredientsPage />} />
+      <Route path="/recipepage" element={<RecipePage />} />
+    </Routes>
   );
-}
+};
 
-export default App;
+export default Main;
