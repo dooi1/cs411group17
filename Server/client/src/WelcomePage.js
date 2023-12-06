@@ -43,6 +43,14 @@ const styles = {
   welcomePage: {
     textAlign: 'center',
   },
+  title: {
+    fontSize: '3em', // Adjust the font size as needed
+    marginBottom: '10px', // Add spacing
+  },
+  description: {
+    fontSize: '1.5em', // Adjust the font size as needed
+    marginBottom: '20px', // Add spacing
+  },
 };
 
 const WelcomePage = () => {
@@ -50,8 +58,10 @@ const WelcomePage = () => {
     <div style={styles.body}>
       <div style={styles.overlay}>
         <div style={styles.welcomePage}>
-          <h1>Meal + Music</h1>
-          <p>Discover delicious recipes paired with great music!</p>
+          <h1 style={styles.title}>Meal + Music</h1>
+          <p style={styles.description}>
+            Discover delicious recipes paired with great music!
+          </p>
           <Link to="/ingredientspage">
             <ColorButton variant="contained">Get Started</ColorButton>
           </Link>
