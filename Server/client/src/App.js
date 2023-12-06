@@ -8,7 +8,7 @@ import WelcomePage from './WelcomePage';
 const Main = () => {
   return (
     <Routes>
-      <Route path="/" element={<WelcomePage />} /> {/* Use WelcomePage as the starting point */}
+      <Route path="/" element={<WelcomePage />} />
       <Route path="/app" element={<App />} />
       <Route path="/ingredientspage" element={<IngredientsPage />} />
       <Route path="/recipepage" element={<RecipePage />} />

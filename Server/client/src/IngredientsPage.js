@@ -14,20 +14,38 @@ const IngredientsPage = () => {
   };
 
   const generateRecipe = () => {
-    // Add logic to generate recipe based on ingredients
-    navigate('/recipespage');
+    // Add logic to generate a recipe based on ingredients
+    navigate('/recipepage');
+  };
+
+  const containerStyle = {
+    margin: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100vh',
+    textAlign: 'center',
+  };
+
+  const inputContainerStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: '10px', // Adjust spacing as needed
   };
 
   return (
-    <div>
+    <div style={containerStyle}>
       <h1>Enter Ingredients</h1>
-      <input
-        type="text"
-        value={ingredient}
-        onChange={(e) => setIngredient(e.target.value)}
-        placeholder="Type an ingredient"
-      />
-      <button onClick={addIngredient}>Add Ingredient</button>
+      <div style={inputContainerStyle}>
+        <input
+          type="text"
+          value={ingredient}
+          onChange={(e) => setIngredient(e.target.value)}
+          placeholder="Type an ingredient"
+        />
+        <button onClick={addIngredient}>Add Ingredient</button>
+      </div>
       <ul>
         {ingredientList.map((item, index) => (
           <li key={index}>{item}</li>
