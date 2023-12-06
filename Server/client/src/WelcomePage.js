@@ -1,6 +1,17 @@
 // WelcomePage.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { styled } from '@mui/material/styles';
+import Button from '@mui/material/Button';
+import { brown } from '@mui/material/colors';
+
+const ColorButton = styled(Button)(({ theme }) => ({
+  color: theme.palette.getContrastText(brown[500]),
+  backgroundColor: brown[500],
+  '&:hover': {
+    backgroundColor: brown[700],
+  },
+}));
 
 const styles = {
   body: {
@@ -19,10 +30,10 @@ const WelcomePage = () => {
   return (
     <div style={styles.body}>
       <div style={styles.welcomePage}>
-        <h1>Hi, Welcome to Meal + Music</h1>
+        <h1>Meal + Music</h1>
         <p>Discover delicious recipes paired with great music!</p>
         <Link to="/ingredientspage">
-          <button>Get Started</button>
+          <ColorButton variant="contained">Get Started</ColorButton>
         </Link>
       </div>
     </div>
