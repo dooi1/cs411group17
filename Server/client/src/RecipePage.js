@@ -1,5 +1,42 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { styled } from '@mui/material/styles';
+import Button from '@mui/material/Button';
+import { brown } from '@mui/material/colors';
+
+const customImage = '/photo.png';
+
+const ColorButton = styled(Button)(({ theme }) => ({
+  color: theme.palette.getContrastText(brown[500]),
+  backgroundColor: brown[500],
+  '&:hover': {
+    backgroundColor: brown[700],
+  },
+}));
+
+const styles = {
+  container: {
+    margin: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100vh',
+    textAlign: 'center',
+    backgroundImage: `url(${customImage})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    position: 'relative',
+    opacity: 0.8,  // Set the opacity value (0 to 1) as needed
+  },
+  buttonContainer: {
+    display: 'flex',
+    marginTop: '10px',
+  },
+  button: {
+    marginLeft: '10px',
+  },
+};
 
 const RecipePage = () => {
   const navigate = useNavigate();
@@ -15,29 +52,25 @@ const RecipePage = () => {
     navigate('/');
   };
 
-  const containerStyle = {
-    margin: 0,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '100vh',
-    textAlign: 'center',
-  };
-
-  const buttonContainerStyle = {
-    display: 'flex',
-    marginTop: '10px', // Add some margin between the buttons
-  };
-
   return (
-    <div style={containerStyle}>
-      <h1>Yummy Recipes Generated</h1>
-      <p>Here are your recipes and generated playlists.</p>
+    <div style={styles.container}>
+      <h1>Select A Recipe To Get Playlist</h1>
       {/* Add your generated recipes or content here */}
-      <div style={buttonContainerStyle}>
-        <button onClick={goBackToIngredients}>Make New Recipe</button>
-        <button onClick={handleLogout} style={{ marginLeft: '10px' }}>Logout</button>
+      <div style={styles.buttonContainer}>
+        <ColorButton
+          variant="contained"
+          onClick={goBackToIngredients}
+          style={styles.button}
+        >
+          Make New Recipe
+        </ColorButton>
+        <ColorButton
+          variant="contained"
+          onClick={handleLogout}
+          style={styles.button}
+        >
+          Logout
+        </ColorButton>
       </div>
     </div>
   );
