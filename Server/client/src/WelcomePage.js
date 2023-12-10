@@ -1,5 +1,5 @@
 // WelcomePage.jsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
@@ -54,7 +54,32 @@ const styles = {
 };
 
 const WelcomePage = () => {
-  return (
+  const [spotifyUrl, setSpotifyUrl] = useState('');
+
+  useEffect(() => {
+    const fetchLoginUrl = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/');
+        if (response.ok) {
+          const url = await response.text();
+          setSpotifyUrl(url);
+        }
+      } catch  (error) {
+        console.error('Error fetching Spotify login URL:', error);
+      }
+    };
+
+    fetchLoginUrl();
+  }, []);  
+
+  const handleGetStartedClick = () => {
+    if (spotifyUrl) {
+      window.location.href = spotifyUrl;
+    }else {
+      console.error("Spotify URL not set");
+    }
+  };
+    return (
     <div style={styles.body}>
       <div style={styles.overlay}>
         <div style={styles.welcomePage}>
@@ -62,9 +87,9 @@ const WelcomePage = () => {
           <p style={styles.description}>
             Discover delicious recipes paired with great music!
           </p>
-          <Link to="/ingredientspage">
-            <ColorButton variant="contained">Get Started</ColorButton>
-          </Link>
+          <ColorButton onClick={handleGetStartedClick} variant="contained">
+            Get Started
+          </ColorButton>
         </div>
       </div>
     </div>
