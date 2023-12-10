@@ -59,11 +59,12 @@ const WelcomePage = () => {
   useEffect(() => {
     const fetchLoginUrl = async () => {
       try {
-        const response = await fetch('http://localhost:5000/');
+        const response = await fetch('http://localhost:5000/login');
         if (response.ok) {
-          const url = await response.text();
-          setSpotifyUrl(url);
+          const data = await response.json(); // Parse response as JSON
+          setSpotifyUrl(data.auth_url); // Assuming the backend sends JSON with { auth_url: "..." }
         }
+        
       } catch  (error) {
         console.error('Error fetching Spotify login URL:', error);
       }
