@@ -8,10 +8,12 @@ from flask import Flask, request, url_for, session, redirect, render_template, j
 from config import Spotify_config, Mongo_config, Spoonacular_config
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
+from flask_cors import CORS
 
 
 # initialize Flask app and Mongo Atlas DB
 app = Flask(__name__)
+CORS(app)
 client = MongoClient(Mongo_config.mongo_uri, server_api=ServerApi('1'))
 db = client['cs411APP']
 users_collection = db.users
@@ -25,17 +27,18 @@ app.secret_key = Spotify_config.SECRET_KEY
 # set the key for the token info in the session dictionary
 TOKEN_INFO = 'token_info'
 
-@app.route('/categoryInput', methods=['GET'])
+"""@app.route('/categoryInput', methods=['GET'])
 def cat_input():
-    return render_template('test_input.html')
+    return render_template('test_input.html')"""
 
 # route to handle logging in
-@app.route('/')
+@app.route('/login')
 def login():
     # create a SpotifyOAuth instance and get the authorization URL
     auth_url = create_spotify_oauth().get_authorize_url()
     # redirect the user to the authorization URL
-    return redirect(auth_url)
+    return jsonify({'auth_url': auth_url})
+    #return redirect(auth_url)
 
 # route to handle the redirect URI after authorization
 @app.route('/redirect')
@@ -68,7 +71,7 @@ def redirect_page():
 
     # save the token info in the session
     session[TOKEN_INFO] = token_info
-    return redirect(url_for('cat_input',_external=True))
+    return redirect('http://localhost:3000/ingredientspage')
 
 @app.route('/getRecipes', methods =['GET'])
 def search_by_ingredients():
@@ -100,16 +103,6 @@ def cat_playlists():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
-        # if the token info is not found, redirect the user to the login route
-        #print('User not logged in')
-        #return redirect("/")
-    #Originail code category_id = request.args.get('category')
-    #create a Spotipy instance with the access token
-    #sp = spotipy.Spotify(auth=token_info['access_token'])
-    #response = sp.category_playlists(category_id=str(category_id))['playlists']['items']
-    #return response
-
-
 
 
 # function to get the token info from the session
@@ -136,7 +129,8 @@ def create_spotify_oauth():
     return SpotifyOAuth(
         client_id= client_id,
         client_secret=client_secret,
-        redirect_uri = url_for('redirect_page', _external=True),
+        redirect_uri='http://localhost:5000/redirect'
+        #redirect_uri = url_for('redirect_page', _external=True),
         #scope='user-library-read playlist-modify-public playlist-modify-private'
     )
 if __name__ == "__main__":
