@@ -4,11 +4,11 @@ import time
 import spotipy
 import requests
 from spotipy.oauth2 import SpotifyOAuth
-from flask import Flask, request, url_for, session, redirect, render_template, jsonify
+from flask import Flask, request, url_for, session, redirect, render_template, jsonify, make_response
 from config import Spotify_config, Mongo_config, Spoonacular_config
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 
 
 # initialize Flask app and Mongo Atlas DB
@@ -75,11 +75,27 @@ def redirect_page():
 
 @app.route('/getRecipes', methods =['GET'])
 def search_by_ingredients():
-    ingredients = requests.args.get('ingredients')
-    endpoint = f"https://api.spoonacular.com/recipes/findByIngredients?apiKey={Spoonacular_config.food_uri}"
-    response = request.get(endpoint)
+    ingredients = request.args.get('ingredients')
+    if not ingredients:
+        return jsonify({'error': 'No ingredients provided'}), 400
+    
+    api_key = Spoonacular_config.food_api
 
-    return jsonify(response)
+    endpoint = f"https://api.spoonacular.com/recipes/findByIngredients?apiKey={api_key}"
+    response = requests.get(endpoint, params = {
+        'ingredients':ingredients,
+        'number':5
+    })
+    if response.status_code == 200:
+        # Create a response object
+        flask_response = make_response(jsonify(response.json()))
+
+        # Set CORS headers
+        flask_response.headers['Access-Control-Allow-Origin'] = '*'
+
+        return flask_response
+    else:
+        return jsonify({'error': 'Failed to fetch recipes'}), response.status_code
 
 
 # route to get playlist based on category input
@@ -88,29 +104,34 @@ def cat_playlists():
     try: 
         # get the token info from the session
         token_info = get_token()
+        print(token_info)
         if not token_info:
             return jsonify({'error': 'Authentication required'}), 401
-        
+        print('ERROR CHECK')
         category_id = request.args.get('category') #category is the id of the type form in HTML form
+        print("Received category ID:", category_id)
         if not category_id:
             return jsonify({'error': 'Missing Category ID'}), 400
-        
         sp = spotipy.Spotify(auth=token_info['access_token'])
-        response = sp.category_playlists(category_id=str(category_id))['playlists']['items']
+        response = sp.category_playlists(category_id=str(category_id), limit = 5)['playlists']['items']
+        if response is None:
+            print('None Object')
 
         return jsonify(response)
     
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': str(e)}), 500 
+   
     
 
 
 # function to get the token info from the session
 def get_token():
+    print('token_here')
     token_info = session.get(TOKEN_INFO, None)
     if not token_info:
         # if the token info is not found, redirect the user to the login route
-        redirect(url_for('login', _external=False))
+        return redirect(url_for('login', _external=False))
     
     # check if the token is expired and refresh it if necessary
     now = int(time.time())
@@ -133,5 +154,6 @@ def create_spotify_oauth():
         #redirect_uri = url_for('redirect_page', _external=True),
         #scope='user-library-read playlist-modify-public playlist-modify-private'
     )
+
 if __name__ == "__main__":
     app.run(debug=True)
