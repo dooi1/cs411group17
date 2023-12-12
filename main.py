@@ -19,10 +19,12 @@ db = client['cs411APP']
 users_collection = db.users
 
 # set the name of the session cookie
-app.config['SESSION_COOKIE_NAME'] = 'Spotify Cookie'
+app.config['SESSION_COOKIE_NAME'] = 'Spotify Cookie'  
+
 
 # set a random secret key to sign the cookie
 app.secret_key = Spotify_config.SECRET_KEY
+
 
 # set the key for the token info in the session dictionary
 TOKEN_INFO = 'token_info'
@@ -55,7 +57,6 @@ def redirect_page():
     
     spotify_api = spotipy.Spotify(auth=token_info['access_token'])
     spotify_user_data = spotify_api.current_user()
-
     user_information = {
         "spotify_id": spotify_user_data['id'],
         "access_token": token_info['access_token'],
@@ -72,6 +73,7 @@ def redirect_page():
     # save the token info in the session
     session[TOKEN_INFO] = token_info
     return redirect('http://localhost:3000/ingredientspage')
+
 
 @app.route('/getRecipes', methods =['GET'])
 def search_by_ingredients():
@@ -123,8 +125,6 @@ def cat_playlists():
         return jsonify({'error': str(e)}), 500 
    
     
-
-
 # function to get the token info from the session
 def get_token():
     print('token_here')
@@ -137,10 +137,15 @@ def get_token():
     now = int(time.time())
 
     is_expired = token_info['expires_at'] - now < 60
-    if(is_expired):
+    #if(is_expired):
+        #spotify_oauth = create_spotify_oauth()
+        #token_info = spotify_oauth.refresh_access_token(token_info['refresh_token']) 
+    if is_expired:
         spotify_oauth = create_spotify_oauth()
-        token_info = spotify_oauth.refresh_access_token(token_info['refresh_token'])
-
+        new_token_info = spotify_oauth.refresh_access_token(token_info['refresh_token'])
+        session[TOKEN_INFO] = new_token_info  # Save the new token info to the session
+        return new_token_info
+    print('get function token info')
     return token_info
 
 
