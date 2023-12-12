@@ -6,6 +6,36 @@ import Button from '@mui/material/Button';
 import { brown } from '@mui/material/colors';
 
 const customImage = '/photo.png';
+const imageUrl = "/chilldinner.jpeg";
+const imageUrl2 = "/dinnerwithfriends.jpeg"
+const imageUrl3 = "/jazzyromance.webp"
+const imageUrl4 = "/classical.jpeg"
+const Playlists = {
+  Dinner: [
+    {
+      imageUrl: imageUrl ,// Replace with actual Spotify playlist image URL
+      link: "https://open.spotify.com/playlist/37i9dQZF1DX4xuWVBs4FgJ?si=ef1ca2887f7b4e25"
+    },
+    {
+      imageUrl: imageUrl2,
+      link: "https://open.spotify.com/playlist/37i9dQZF1DXb83YJL7gTWj?si=38c139b8e3c84e72"
+    }
+  ],
+  Romance: [
+    {
+      imageUrl: imageUrl3,
+      link: "https://open.spotify.com/playlist/37i9dQZF1DWTbzY5gOVvKd?si=c497261654a24821"
+    },
+    {
+      imageUrl: imageUrl4,
+      link: "https://open.spotify.com/playlist/37i9dQZF1DX4s3V2rTswzO?si=7690c75112d54f82"
+    }
+    // ... add Romance playlists
+  ],
+  Casual: [
+    // ... add Casual playlists
+  ]
+};
 
 const ColorButton = styled(Button)(({ theme }) => ({
   color: theme.palette.getContrastText(brown[500]),
@@ -53,18 +83,28 @@ const styles = {
     height: 'auto',
   },
   playlistsContainer: {
-    display: 'flex',       // Enables Flexbox
-    flexWrap: 'wrap',      // Allows items to wrap to the next line
-    justifyContent: 'center', // Centers items horizontally
-    marginTop: '20px',     // Adds space above the playlist container
+    display: 'flex',       
+    flexWrap: 'wrap',      
+    justifyContent: 'center',
+    marginTop: '20px',     
   },
   playlistItem: {
     margin: '10px',
     padding: '10px',
     maxWidth: '200px',
-    textAlign: 'center', // Center text and images inside each playlist item
+    minWidth: '150px', // Prevents the item from becoming too narrow
+    textAlign: 'center',
+    height: '300px', // Example fixed height, adjust as needed
   },
+  playlistImage: {
+    width: '100%',  // Ensures the image doesn't exceed its container
+    height: 'auto', // Keeps the image aspect ratio
+    objectFit: 'cover', // Adjust how the image fits (cover, contain, etc.)
+  }
+
 };
+
+
 
 const RecipePage = () => {
   const navigate = useNavigate();
@@ -79,10 +119,11 @@ const RecipePage = () => {
     console.log("Selected category:", category);
     setSelectedCategory(category);
 
+  
   }
+  
 
-
-  const fetchPlaylists =  async () => {
+  /*const fetchPlaylists =  async () => {
     if (selectedCategory){
       console.log(`Request URL: http://127.0.0.1:5000/getPlaylists?category=${selectedCategory}`);  // Log the request URL
       const response = await fetch(`http://127.0.0.1:5000/getPlaylists?category=${selectedCategory}`);
@@ -97,7 +138,13 @@ const RecipePage = () => {
       }
     }
     
-  }
+  } */
+  const fetchPlaylists = () => {
+    // Setting playlists based on the selected category
+    if (selectedCategory) {
+      setPlaylists(Playlists[selectedCategory] || []);
+    }
+  };
 
   // Add logic for displaying generated recipes
   const goBackToIngredients = () => {
@@ -130,14 +177,14 @@ const RecipePage = () => {
 
       {/* Render playlists */}
       <div style={styles.playlistsContainer}>
-                {playlists.map((playlist, index) => (
-                    <div key={index}>
-                        {/* Render playlist details */}
-                        <p>{playlist.name}</p>
-                        {/* More details */}
-                    </div>
-                ))}
-            </div>
+  {playlists.map((playlist, index) => (
+    <div key={index} style={styles.playlistItem}>
+      <a href={playlist.link} target="_blank" rel="noopener noreferrer">
+        <img src={playlist.imageUrl} alt="Playlist" style={styles.playlistImage} />
+      </a>
+    </div>
+  ))}
+</div>
       <div style={styles.buttonContainer}>
       <ColorButton variant="contained" onClick={fetchPlaylists} style={styles.button}>
         Generate Playlist
